@@ -7,8 +7,8 @@ const axios = require("axios");
 router.get("/get-comment-posts/:idUser/:accessToken", async (req, res) => {
   try {
     const { idUser, accessToken } = req.query;
-    // const idUser = 'pfbid02iKrsVUWrAPZ6VUHC2zH7F7dNBrbwrXAkHPbkgx4yPpXuw9CoghpbXJRMw4woGWQ4l'
-    // const accessToken = 'EAAGNO4a7r2wBO3lx5i3AHkZAVg1MAyI6TekC0ODJZCZASsy5Ms5unTBzHoedForIAu4arAQRDB6LAQYuAm8Cn7acwX15fioZBnkn63UUySbdWLHvTfM90DILmZCFEOVfCSAURejA1FLIMO6OouMs2QEk878Txg5nQktR5OhyembGxwQveyTaVTuoa7kk3jXREe2a6TpCLHAZDZD'
+     //const idUser = '100009347046436'
+     //const accessToken = 'EAAGNO4a7r2wBOyZAP4ZBk1BkoUhfud3dIyc70GZCZBDEzEnn3EbFI3BymaTLdJZAEmrLqHBiuM1xZA6vLmDNCnhoE1rHEPYUJpaufZCAruSAZAswgQujqxPb3AofvjwKrUVi6ZCi4A28RZCmU0PDa3cdc8Lx4SEohdSo78oZBulyPKuemiIxMJfjM3IfwPJowZDZD'
     const response = await axios.get(
       `https://graph.facebook.com/${idUser}?access_token=${accessToken}`
     );
