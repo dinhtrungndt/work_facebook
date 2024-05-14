@@ -1,22 +1,40 @@
 var express = require("express");
 var router = express.Router();
 const axios = require("axios");
+const commentsModel = require("../models/comments");
 
-// Lấy danh sách comment bài viết dự theo api https://graph.facebook.com/USER-ID?access_token=ACCESS-TOKEN
-// với USER-ID là id của người dùng, ACCESS-TOKEN là token của người dùng trong body để nhập
-router.get("/get-comment-posts/:idUser/:accessToken", async (req, res) => {
+// Lấy danh sách các comments
+// http://localhost:3000/comments
+router.get("/", async (req, res) => {
+  const data = await commentsModel.find();
+  res.json(data);
+});
+
+// Lấy danh sách comments trên facebook
+// http://localhost:3000/comments/get-comments-facebook/:idPost/:token
+// https://graph.facebook.com/ID-POSTS/comments?access_token=TOKEN
+router.get("/get-comments-facebook/:idPost/:token", async (req, res) => {
   try {
-    const { idUser, accessToken } = req.query;
-    // const idUser = 'pfbid02iKrsVUWrAPZ6VUHC2zH7F7dNBrbwrXAkHPbkgx4yPpXuw9CoghpbXJRMw4woGWQ4l'
-    // const accessToken = 'EAAGNO4a7r2wBO3lx5i3AHkZAVg1MAyI6TekC0ODJZCZASsy5Ms5unTBzHoedForIAu4arAQRDB6LAQYuAm8Cn7acwX15fioZBnkn63UUySbdWLHvTfM90DILmZCFEOVfCSAURejA1FLIMO6OouMs2QEk878Txg5nQktR5OhyembGxwQveyTaVTuoa7kk3jXREe2a6TpCLHAZDZD'
-    const response = await axios.get(
-      `https://graph.facebook.com/${idUser}?access_token=${accessToken}`
-    );
-    res.json(response);
-    console.log("get-comment-posts", response);
+    const { idPost, token } = req.params;
+    const url = `https://graph.facebook.com/${idPost}/comments?access_token=${token}`;
+    const data = await axios.get(url);
+    console.log("Lấy danh sách comments trên facebook thành công ", data);
+    res.json(data.data);
   } catch (error) {
-    console.log("get-comment-posts", error);
-    res.json(error);
+    console.log("Lỗi lấy danh sách comments trên facebook ", error);
+  }
+});
+
+// Thêm danh sách comment
+// http://localhost:3000/comments/add-comment
+router.post("/add-comment", async (req, res) => {
+  try {
+    const data = req.body;
+    const comment = new commentsModel(data);
+    await comment.save();
+    res.json(comment);
+  } catch (error) {
+    console.log("Lỗi thêm danh sách comments ", error);
   }
 });
 

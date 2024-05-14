@@ -49,7 +49,7 @@ mongoose
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/accounts", accountRouter);
-app.use("/comment", commentRouter);
+app.use("/comments", commentRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
