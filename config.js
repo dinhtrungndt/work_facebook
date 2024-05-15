@@ -1,6 +1,10 @@
 module.exports = {
-  facebook_key: "704343677530189",
-  facebook_secret: "1d09f823b074cccdf8f6482c328f3a22",
-  callback_url: "http://localhost:3000/accounts",
+  // facebook_key: "453934460546244",
+  // facebook_secret: "f533b5582d1a5b3fbc90a10c80fb5b07",
+  facebook_key: "376742021420889",
+  facebook_secret: "c8fd8e3ef3ac13fd4b498a73462f954c",
+  callback_url: "http://localhost:3000/testLogin/auth/facebook/callback",
+  access_token:
+    "EAAGNO4a7r2wBO8EIPzj6bixHytYPUzOFxgZCzhUW1ZBiPxXWKwPwGDi7g5DV7Dd0uZB6BgUypJxefFaUNBJpmNgJcB0onMdj7SDGYDZBUwmRLNzfIuq1a7paDQXZBOZAolRJ6gknZBHjsrMyedgFQZBORGV8mzcC86D276f9xsoRMU56q3cQFzhGs6kVY5guw6dJcZBLvRNKmgwZDZD",
 };
 

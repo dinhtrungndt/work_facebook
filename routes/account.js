@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const axios = require('axios');
 const accessToken = process.env.ACCESS_TOKEN;
-const request = require('request-promise');  
+
 const passport = require("passport");
 const config = require("../config");
 const FacebookStrategy = require("passport-facebook").Strategy;

@@ -1,7 +1,8 @@
-<h1>{{ title }}</h1>
-<p>Welcome to {{ title }}</p>
+  <p >ID của bạn là: <p style="color:rgb(21, 121, 107)">{{id}}</p></p>
+  <p>Tên của bạn là:<p style="color:rgb(21, 121, 107)">{{name}}</p></p>
 {{#if user}}
   <p>Welcome, {{user.displayName}}</p>
+  <p>Your Facebook ID: {{user.id}}</p>
   <a href="/testLogin/logout">Logout</a>
 {{else}}
   <a href="/testLogin/auth/facebook">

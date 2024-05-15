@@ -9,7 +9,7 @@ const getAccessToken = async () => {
       `https://graph.facebook.com/oauth/access_token?client_id=${appId}&client_secret=${appSecret}&grant_type=client_credentials`
     );
     const accessToken = response.data.access_token;
-    console.log("Access Token:", accessToken);
+    // console.log("Access Token:", accessToken);
     return accessToken;
   } catch (error) {
     console.error("Error getting Access Token:", error);

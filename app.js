@@ -9,14 +9,22 @@ const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("./config");
 const session = require("express-session");
+
 const testLogin = require("./routes/testLogin");
+// const http = require("http");
+// const socketIo = require("socket.io");
+const modelUrl = require("./models/url");
+// const server = http.createServer(app);
+// const io = socketIo(server, { cors: { origin: "*" } });
 
 require("./models/accounts");
 
+const User = require("./models/user.model");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var accountRouter = require("./routes/account");
 var commentRouter = require("./routes/comment");
+var testGetRouter = require("./routes/testGet");
 
 // Passport session setup.
 passport.serializeUser(function (user, done) {
@@ -35,14 +43,51 @@ passport.use(
       clientSecret: config.facebook_secret,
       callbackURL: config.callback_url,
     },
-    function (accessToken, refreshToken, profile, done) {
-      process.nextTick(function () {
-        console.log(accessToken, refreshToken, profile, done);
-        return done(null, profile);
+    async function (accessToken, refreshToken, profile, cb) {
+      const user = await User.findOne({
+        accountId: profile.id,
+        provider: "facebook",
       });
+      if (!user) {
+        console.log("Adding new facebook user to DB..");
+        const user = new User({
+          accountId: profile.id,
+          name: profile.displayName,
+          provider: profile.provider,
+        });
+        await user.save();
+        console.log(user);
+        return cb(null, profile);
+      } else {
+        console.log("Facebook User already exist in DB..");
+        console.log(profile);
+        return cb(null, profile);
+      }
     }
   )
 );
+
+// const link = passport._strategies.facebook._profileURL;
+// console.log(
+//   "passport passport:",
+//   link + "?access_token=" + config.access_token
+// );
+
+// console.log(
+//   "linklinklinklinklinklink:",
+//   link + "?access_token=" + config.access_token
+// );
+
+// io.on("connection", (socket) => {
+//   console.log("-- >> connected");
+//   socket.on('send_urls', async (data) => {
+//     try {
+//       const
+//     } catch (error) {
+//       console.log("error socket.io connection", error);
+//     }
+//   });
+// });
 
 var app = express();
 const cors = require("cors");
@@ -66,11 +111,13 @@ app.use(express.static(path.join(__dirname, "public")));
 // Sử dụng body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({
-  resave: false,
-  saveUninitialized: true,
-  secret: 'SECRET'
-}));
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: "SECRET",
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -89,6 +136,7 @@ app.use("/users", usersRouter);
 app.use("/accounts", accountRouter);
 app.use("/comments", commentRouter);
 app.use("/testLogin", testLogin);
+app.use("/testGet", testGetRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
