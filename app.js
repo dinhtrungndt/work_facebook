@@ -19,6 +19,7 @@ const modelUrl = require("./models/url");
 
 require("./models/accounts");
 
+const User = require("./models/user.model");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var accountRouter = require("./routes/account");
@@ -42,12 +43,26 @@ passport.use(
       clientSecret: config.facebook_secret,
       callbackURL: config.callback_url,
     },
-    function (accessToken, refreshToken, profile, done) {
-      process.nextTick(function () {
-        console.log("UserUser in FacebookStrategy Profile:", profile);
-        console.log(accessToken, refreshToken, profile, done);
-        return done(null, profile);
+    async function (accessToken, refreshToken, profile, cb) {
+      const user = await User.findOne({
+        accountId: profile.id,
+        provider: "facebook",
       });
+      if (!user) {
+        console.log("Adding new facebook user to DB..");
+        const user = new User({
+          accountId: profile.id,
+          name: profile.displayName,
+          provider: profile.provider,
+        });
+        await user.save();
+        console.log(user);
+        return cb(null, profile);
+      } else {
+        console.log("Facebook User already exist in DB..");
+        console.log(profile);
+        return cb(null, profile);
+      }
     }
   )
 );
