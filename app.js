@@ -9,7 +9,13 @@ const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("./config");
 const session = require("express-session");
+
 const testLogin = require("./routes/testLogin");
+// const http = require("http");
+// const socketIo = require("socket.io");
+const modelUrl = require("./models/url");
+// const server = http.createServer(app);
+// const io = socketIo(server, { cors: { origin: "*" } });
 
 require("./models/accounts");
 
@@ -17,6 +23,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var accountRouter = require("./routes/account");
 var commentRouter = require("./routes/comment");
+var testGetRouter = require("./routes/testGet");
 
 // Passport session setup.
 passport.serializeUser(function (user, done) {
@@ -37,12 +44,35 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
+        console.log("UserUser in FacebookStrategy Profile:", profile);
         console.log(accessToken, refreshToken, profile, done);
         return done(null, profile);
       });
     }
   )
 );
+
+// const link = passport._strategies.facebook._profileURL;
+// console.log(
+//   "passport passport:",
+//   link + "?access_token=" + config.access_token
+// );
+
+// console.log(
+//   "linklinklinklinklinklink:",
+//   link + "?access_token=" + config.access_token
+// );
+
+// io.on("connection", (socket) => {
+//   console.log("-- >> connected");
+//   socket.on('send_urls', async (data) => {
+//     try {
+//       const
+//     } catch (error) {
+//       console.log("error socket.io connection", error);
+//     }
+//   });
+// });
 
 var app = express();
 const cors = require("cors");
@@ -66,7 +96,13 @@ app.use(express.static(path.join(__dirname, "public")));
 // Sử dụng body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({ secret: "keyboard cat", key: "sid" }));
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: "SECRET",
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -85,6 +121,7 @@ app.use("/users", usersRouter);
 app.use("/accounts", accountRouter);
 app.use("/comments", commentRouter);
 app.use("/testLogin", testLogin);
+app.use("/testGet", testGetRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

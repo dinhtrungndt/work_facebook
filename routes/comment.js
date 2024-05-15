@@ -3,7 +3,9 @@ var router = express.Router();
 const axios = require("axios");
 const commentsModel = require("../models/comments");
 const getAccessToken = require("./getAccessToken");
+const passport = require("../app");
 
+// console.log("passport:", passport);
 getAccessToken()
   .then((accessToken) => {
     // Lấy danh sách các comments
@@ -18,6 +20,8 @@ getAccessToken()
     router.get("/get-comments-facebook/:idPost", async (req, res) => {
       try {
         const { idPost } = req.params;
+        // const accessTokenT =
+        // "EAAGNO4a7r2wBO8EIPzj6bixHytYPUzOFxgZCzhUW1ZBiPxXWKwPwGDi7g5DV7Dd0uZB6BgUypJxefFaUNBJpmNgJcB0onMdj7SDGYDZBUwmRLNzfIuq1a7paDQXZBOZAolRJ6gknZBHjsrMyedgFQZBORGV8mzcC86D276f9xsoRMU56q3cQFzhGs6kVY5guw6dJcZBLvRNKmgwZDZD";
         const url = `https://graph.facebook.com/${idPost}/comments?access_token=${accessToken}`;
         const response = await axios.get(url);
         if (response.data.error) {
