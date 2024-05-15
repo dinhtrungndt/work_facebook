@@ -1,10 +1,11 @@
-  <p >ID của bạn là: <p style="color:rgb(21, 121, 107)">{{id}}</p></p>
-  <p>Tên của bạn là:<p style="color:rgb(21, 121, 107)">{{name}}</p></p>
+  {{!-- <p >ID của bạn là: <p style="color:rgb(21, 121, 107)">{{id}}</p></p>
+  <p>Tên của bạn là:<p style="color:rgb(21, 121, 107)">{{name}}</p></p> --}}
 {{#if user}}
   <p>Welcome, {{user.displayName}}</p>
   <p>Your Facebook ID: {{user.id}}</p>
   <a href="/testLogin/logout">Logout</a>
 {{else}}
+  <p>Vui lòng đăng nhập để xem thông tin</p>
   <a href="/testLogin/auth/facebook">
     <button>Login with Facebook</button>
   </a>
