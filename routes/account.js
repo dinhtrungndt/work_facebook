@@ -1,33 +1,46 @@
+// var express = require("express");
+// var router = express.Router();
+// const accountsModel = require("../models/accounts");
+
+// router.get("/", async (req, res) => {
+//   try {
+//     const data = await accountsModel.find();
+//     res.json(data);
+//     console.log(data);
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+  
+//   }
+// });
+
+// module.exports = router;
+
 const express = require("express");
 const router = express.Router();
+const cookieParser = require('cookie-parser');
+const accountsModel = require("../models/accounts");
+require('dotenv').config();
 const axios = require('axios');
 const accessToken = process.env.ACCESS_TOKEN;
-
-const passport = require("passport");
-const config = require("../config");
-const FacebookStrategy = require("passport-facebook").Strategy;
-
-const Bearertoken = ""
-
+var graph = require('fbgraph');
+// console.log(accessToken);
+graph.setAccessToken(accessToken);
 // Route để xử lý yêu cầu GET
+const userId = '100009347046436';
 router.get("/", async (req, res) => {
+  console.log(`https://graph.facebook.com/me?fields=id,name,posts{message}&access_token=${accessToken}`);
   try {
-    const userId = '100009347046436'; // ID của người dùng trên Facebook
-    const fields = 'id,name,posts{message}'; // Các trường dữ liệu cần lấy
-    const apiUrl = `https://graph.facebook.com/${userId}?fields=${fields}&access_token=${accessToken}`;
-
-    // Tạo headers với Bearer token
-    const headers = {
-      Authorization: `Bearer ${Bearertoken}`
-    };
-
-    // Sử dụng axios để gửi yêu cầu HTTP với headers
-    const response = await axios.get(apiUrl, { headers });
-    res.json(response.data);
-  } catch (error) {
-   // console.error("Lỗi:", error);
-    res.status(500).json({ error: "Network too fast" });
-  }
+    console.log('1')
+        
+    //const response = await axios.get(`https://graph.facebook.com/me?fields=id,name,posts{message}&access_token=${accessToken}`);
+    console.log('2')
+    console.log(`https://graph.facebook.com/me?fields=id,name,posts{message}&access_token=${accessToken}`);
+    //res.json(response.data);
+} catch (error) {
+  console.error("Error:", error);
+    res.status(500).send(error.toString());
+}
 });
 
 module.exports = router;

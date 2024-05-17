@@ -5,6 +5,6 @@ module.exports = {
   facebook_secret: "c8fd8e3ef3ac13fd4b498a73462f954c",
   callback_url: "http://localhost:3000/testLogin/auth/facebook/callback",
   access_token:
-    "EAAGNO4a7r2wBO8EIPzj6bixHytYPUzOFxgZCzhUW1ZBiPxXWKwPwGDi7g5DV7Dd0uZB6BgUypJxefFaUNBJpmNgJcB0onMdj7SDGYDZBUwmRLNzfIuq1a7paDQXZBOZAolRJ6gknZBHjsrMyedgFQZBORGV8mzcC86D276f9xsoRMU56q3cQFzhGs6kVY5guw6dJcZBLvRNKmgwZDZD",
+    "EAAe5BrkTLtoBO3MDSlHN6QQJuPQms5zpm9hLrMHmwTBZCryAROPTMhjpFJWqtTZA8Jd1DHRvcEvPOyarKOc7ZCKRdsaKilWn5d24iQoJaTpMCq4wNorTbhtgnuaclLZALSwCGM8tZC3VbzpMwiCuVaHPk88h8wvo4ewfWJmnbYRw4gajViw7uPMPTrR2YTeVWgU3FspH7nT8KkAQAoQZDZD",
 };
 
