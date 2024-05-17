@@ -1,8 +1,8 @@
 module.exports = {
-  // facebook_key: "453934460546244",
-  // facebook_secret: "f533b5582d1a5b3fbc90a10c80fb5b07",
-  facebook_key: "1613963909171316",
-  facebook_secret: "1c06da37f858186f6f40b184b3528e98",
+  facebook_key: "453934460546244",
+  facebook_secret: "f533b5582d1a5b3fbc90a10c80fb5b07",
+  // facebook_key: "1613963909171316",
+  // facebook_secret: "1c06da37f858186f6f40b184b3528e98",
   // facebook_key: "1253008412343322",
   // facebook_secret: "291f004613f832803454abd2e1b13928",
   callback_url: "http://localhost:3000/testLogin/auth/facebook/callback",

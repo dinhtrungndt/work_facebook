@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-const posts = new Schema(
+const ReplyComment = new Schema(
   {
     id: { type: ObjectId },
-    idPost: { type: String },
+    idReply: { type: String },
     message: { type: String },
   },
   {
@@ -13,4 +13,5 @@ const posts = new Schema(
   }
 );
 
-module.exports = mongoose.models.posts || mongoose.model("posts", posts);
+module.exports =
+  mongoose.models.ReplyComment || mongoose.model("ReplyComment", ReplyComment);

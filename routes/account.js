@@ -20,7 +20,9 @@ router.get("/:userId/:accessToken", async (req, res) => {
     FB.api(
       `/${userId}?access_token=${accessToken}`,
       "GET",
-      {},
+      {
+        fields: "id,name,email,picture,link,accounts,permissions",
+      },
       function (response) {
         if (!response || response.error) {
           console.error("Lỗi khi lấy thông tin người dùng:", response.error);
