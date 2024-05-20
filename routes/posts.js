@@ -20,7 +20,9 @@ router.get("/getAll-posts-accounts/:idUser/:accessToken", async (req, res) => {
     FB.api(
       `/${idUser}/accounts?access_token=${accessToken}`,
       "GET",
-      {},
+      {
+        fields: "id,name,access_token,category,link,phone",
+      },
       function (response) {
         if (!response || response.error) {
           console.error("Lỗi khi lấy thông tin người dùng:", response.error);
@@ -48,7 +50,8 @@ router.get("/get-posts/:pageId/:accessToken", async (req, res) => {
       `/${pageId}?access_token=${accessToken}`,
       "GET",
       {
-        fields: "id,name,about,category,cover,fan_count,link,location,phone",
+        fields:
+          "id,name,about,category,cover,fan_count,link,location,phone, picture",
       },
       function (response) {
         if (!response || response.error) {
@@ -57,7 +60,7 @@ router.get("/get-posts/:pageId/:accessToken", async (req, res) => {
         }
 
         // console.log("Lấy bài viết thành công :", response);
-        res.json(response);
+        res.json([response]);
       }
     );
   } catch (error) {
@@ -200,7 +203,9 @@ router.get("/get-posts-all/:pageId/:accessToken", async (req, res) => {
     FB.api(
       `/${pageId}/feed?access_token=${accessToken}`,
       "GET",
-      {},
+      {
+        fields: "id,message,created_time,full_picture,permalink_url, story",
+      },
       function (response) {
         if (!response || response.error) {
           console.error("Lỗi khi lấy danh sách bài viết:", response.error);
