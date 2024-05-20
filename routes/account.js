@@ -21,7 +21,7 @@ router.get("/:userId/:accessToken", async (req, res) => {
       `/${userId}?access_token=${accessToken}`,
       "GET",
       {
-        fields: "id,name,email,picture,link,accounts,permissions",
+        fields: "id,name,email,picture.height(1000).width(1000),link,accounts,groups,likes,posts,feed,location,gender,birthday",
       },
       function (response) {
         if (!response || response.error) {
