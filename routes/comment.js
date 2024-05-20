@@ -33,6 +33,10 @@ router.get("/get-comments-facebook/:pageId/:accessToken", async (req, res) => {
         }
 
         // console.log("Lấy bài viết thành công :", response);
+        response.data.sort(
+          (a, b) => new Date(b.created_time) - new Date(a.created_time)
+        );
+
         res.json(response);
       }
     );
@@ -52,13 +56,18 @@ router.get("/get-reply-comments/:commentId/:accessToken", async (req, res) => {
       `/${commentId}/comments?access_token=${accessToken}`,
       "GET",
       {
-        fields: "id,permalink_url,from,message,message_tags,created_time",
+        fields:
+          "id,permalink_url,from,message,message_tags,created_time,parent",
       },
       function (response) {
         if (!response || response.error) {
           console.error("Lỗi khi lấy thông tin người dùng:", response.error);
           return res.status(500).json(response.error);
         }
+        // Sắp xếp các bình luận theo thời gian mới nhất
+        response.data.sort(
+          (a, b) => new Date(b.created_time) - new Date(a.created_time)
+        );
 
         // console.log("Lấy bài viết thành công :", response);
         res.json(response);
