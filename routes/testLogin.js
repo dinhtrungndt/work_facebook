@@ -3,8 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 
 // Trang chủ
-router.get("/", function (req, res) {
-  res.render("index", { title: "Work - Facebook", user: req.user });
+router.get("/", (req, res) => {
+  res.render("index", { user: req.user, accessToken: req.user?.accessToken });
 });
 
 // Trang login
@@ -26,9 +26,8 @@ router.get(
 // Xử lý callback sau khi Facebook xác thực
 router.get(
   "/auth/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/testLogin/login" }),
+  passport.authenticate("facebook", { failureRedirect: "/" }),
   function (req, res) {
-    // Đăng nhập thành công, chuyển hướng về trang chủ
     res.redirect("/testLogin");
   }
 );

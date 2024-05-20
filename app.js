@@ -25,6 +25,9 @@ var usersRouter = require("./routes/users");
 var accountRouter = require("./routes/account");
 var commentRouter = require("./routes/comment");
 var testGetRouter = require("./routes/testGet");
+var postsRouter = require("./routes/posts");
+var zoomRouter = require("./routes/zoom");
+var tiktokRouter = require("./routes/tiktok");
 
 // Passport session setup.
 passport.serializeUser(function (user, done) {
@@ -33,6 +36,10 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(function (obj, done) {
   done(null, obj);
+});
+
+passport.authenticate("facebook", {
+  scope: ["email", "user_photos", "user_posts", "public_profile"],
 });
 
 // Sử dụng FacebookStrategy cùng Passport.
@@ -44,26 +51,23 @@ passport.use(
       callbackURL: config.callback_url,
     },
     async function (accessToken, refreshToken, profile, cb) {
-      const user = await User.findOne({
+      // console.log("accessToken:", accessToken);
+      let user = await User.findOne({
         accountId: profile.id,
         provider: "facebook",
       });
       if (!user) {
-        console.log("Adding new facebook user to DB..");
-        const user = new User({
+        user = new User({
           accountId: profile.id,
           name: profile.displayName,
           provider: profile.provider,
         });
         await user.save();
-        console.log(user);
-        return cb(null, profile);
-      } else {
-        console.log("Facebook User already exist in DB..");
-        console.log(profile);
-        return cb(null, profile);
       }
+      profile.accessToken = accessToken; // Attach the accessToken to the profile object
+      return cb(null, profile);
     }
+   
   )
 );
 
@@ -137,6 +141,10 @@ app.use("/accounts", accountRouter);
 app.use("/comments", commentRouter);
 app.use("/testLogin", testLogin);
 app.use("/testGet", testGetRouter);
+app.use("/posts", postsRouter);
+app.use("/zoom", zoomRouter);
+app.use("/tiktok", tiktokRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

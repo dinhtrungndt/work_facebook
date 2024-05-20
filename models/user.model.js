@@ -27,9 +27,13 @@ const userSchema = new mongoose.Schema(
     githubId: {
       type: String,
     },
+    accessToken: {
+      type: String,
+    },
   },
   {
     timestamps: true,
+    versionKey: false,
   }
 );
 
