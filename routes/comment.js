@@ -42,6 +42,34 @@ router.get("/get-comments-facebook/:pageId/:accessToken", async (req, res) => {
   }
 });
 
+// Lấy danh sách reply comments trên facebook
+// http://localhost:3000/comments/get-reply-comments/:commentId/:accessToken
+router.get("/get-reply-comments/:commentId/:accessToken", async (req, res) => {
+  const { commentId, accessToken } = req.params;
+
+  try {
+    FB.api(
+      `/${commentId}/comments?access_token=${accessToken}`,
+      "GET",
+      {
+        fields: "id,permalink_url,from,message,message_tags,created_time",
+      },
+      function (response) {
+        if (!response || response.error) {
+          console.error("Lỗi khi lấy thông tin người dùng:", response.error);
+          return res.status(500).json(response.error);
+        }
+
+        // console.log("Lấy bài viết thành công :", response);
+        res.json(response);
+      }
+    );
+  } catch (error) {
+    console.error("Lỗi khi gọi Facebook API:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Bình luận bài viết dựa vào post-id
 // https://graph.facebook.com/POST-ID/comments?message=MESSAGE&access_token=ACCESS-TOKEN
 // http://localhost:3000/comments/comment-posts/:postId/:accessToken
