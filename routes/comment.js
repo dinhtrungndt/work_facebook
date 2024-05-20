@@ -25,7 +25,10 @@ router.get("/get-comments-facebook/:pageId/:accessToken", async (req, res) => {
     FB.api(
       `/${pageId}/comments?access_token=${accessToken}`,
       "GET",
-      {},
+      {
+        fields:
+          "id,permalink_url,from,message,message_tags,created_time,parent",
+      },
       function (response) {
         if (!response || response.error) {
           console.error("Lỗi khi lấy thông tin người dùng:", response.error);
@@ -198,6 +201,61 @@ router.post("/reply-comments/:commentId/:accessToken", async (req, res) => {
         });
         newReplyComment.save();
         // console.log("newReplyCommentnewReplyComment:", newReplyComment);
+        res.json(response);
+      }
+    );
+  } catch (error) {
+    console.error("Lỗi khi gọi Facebook API:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Cập nhập phản hồi bình luận dựa vào reply-comment-id
+// https://graph.facebook.com/REPLY-COMMENT-ID?message=MESSAGE&access_token=ACCESS-TOKEN
+// http://localhost:3000/comments/update-reply-comments/:replyCommentId/:accessToken
+router.put("/update-reply-comments/:replyCommentId/:accessToken", async (req, res) => {
+  const { replyCommentId, accessToken } = req.params;
+  const { message } = req.body;
+
+  try {
+    FB.api(
+      `/${replyCommentId}?message=${message}&access_token=${accessToken}`,
+      "POST",
+      {},
+      function (response) {
+        if (!response || response.error) {
+          console.error("Lỗi khi cập nhập phản hồi bình luận:", response.error);
+          return res.status(500).json(response.error);
+        }
+
+        // console.log("Cập nhập phản hồi bình luận thành công:", response);
+        res.json(response);
+      }
+    );
+  } catch (error) {
+    console.error("Lỗi khi gọi Facebook API:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Xóa phản hồi bình luận dựa vào reply-comment-id
+// https://graph.facebook.com/REPLY-COMMENT-ID?access_token=ACCESS-TOKEN
+// http://localhost:3000/comments/delete-reply-comments/:replyCommentId/:accessToken
+router.delete("/delete-reply-comments/:replyCommentId/:accessToken", async (req, res) => {
+  const { replyCommentId, accessToken } = req.params;
+
+  try {
+    FB.api(
+      `/${replyCommentId}?access_token=${accessToken}`,
+      "DELETE",
+      {},
+      function (response) {
+        if (!response || response.error) {
+          console.error("Lỗi khi xóa phản hồi bình luận:", response.error);
+          return res.status(500).json(response.error);
+        }
+
+        // console.log("Xóa phản hồi bình luận thành công:", response);
         res.json(response);
       }
     );
