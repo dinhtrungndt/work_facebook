@@ -26,6 +26,7 @@ var accountRouter = require("./routes/account");
 var commentRouter = require("./routes/comment");
 var testGetRouter = require("./routes/testGet");
 var postsRouter = require("./routes/posts");
+var cloudinaryRouter = require("./routes/cloundinary");
 
 // Passport session setup.
 passport.serializeUser(function (user, done) {
@@ -37,7 +38,10 @@ passport.deserializeUser(function (obj, done) {
 });
 
 passport.authenticate("facebook", {
-  scope: ["email", "user_photos", "user_posts"],
+  scope: ["email", "user_photos", "user_posts", "user_birthday", 
+  "user_hometown", "user_location", "user_likes", "user_events", "user_videos",
+  "user_friends", "user_gender", "user_link", "user_age_range", "manage_fundraisers", "public_profile"
+ ],
 });
 
 // Sử dụng FacebookStrategy cùng Passport.
@@ -139,6 +143,7 @@ app.use("/comments", commentRouter);
 app.use("/testLogin", testLogin);
 app.use("/testGet", testGetRouter);
 app.use("/posts", postsRouter);
+app.use("/cloudinary", cloudinaryRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

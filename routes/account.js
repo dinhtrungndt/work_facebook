@@ -21,7 +21,7 @@ router.get("/:userId/:accessToken", async (req, res) => {
       `/${userId}?access_token=${accessToken}`,
       "GET",
       {
-        fields: "id,name,email,picture.height(1000).width(1000),link,accounts,groups,likes,posts,feed,location,gender,birthday",
+        fields: "id,name,email,picture.height(1000).width(1000),link,accounts,groups,likes,location,gender,birthday",
       },
       function (response) {
         if (!response || response.error) {
@@ -30,6 +30,64 @@ router.get("/:userId/:accessToken", async (req, res) => {
         }
 
         // console.log("Lấy thông tin người dùng thành công:", response);
+        res.json(response);
+      }
+    );
+  } catch (error) {
+    console.error("Lỗi khi gọi Facebook API:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Lấy danh sách bài viết của account theo id và token
+// https://graph.facebook.com/USER-ID/posts?access_token=ACCESS-TOKEN
+// http://localhost:3000/accounts/get-posts-all/:id/:token
+router.get("/get-posts-all/:userId/:accessToken", async (req, res) => {
+  const { userId, accessToken } = req.params;
+
+  try {
+    FB.api(
+      `/${userId}/posts?access_token=${accessToken}`,
+      "GET",
+      {
+        fields: "id,message,created_time,full_picture,permalink_url, message_tags, comments,privacy",
+      },
+      function (response) {
+        if (!response || response.error) {
+          console.error("Lỗi khi lấy danh sách bài viết:", response.error);
+          return res.status(500).json(response.error);
+        }
+
+        // console.log("Lấy danh sách bài viết thành công:", response);
+        res.json(response);
+      }
+    );
+  } catch (error) {
+    console.error("Lỗi khi gọi Facebook API:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Lấy danh sách bình luận của bài viết theo id và token
+// https://graph.facebook.com/POST-ID/comments?access_token=ACCESS-TOKEN
+// http://localhost:3000/accounts/get-comments/:postId/:accessToken
+router.get("/get-comments/:postId/:accessToken", async (req, res) => {
+  const { postId, accessToken } = req.params;
+
+  try {
+    FB.api(
+      `/${postId}/comments?access_token=${accessToken}`,
+      "GET",
+      {
+        fields: "id,from,message,created_time,comments",
+      },
+      function (response) {
+        if (!response || response.error) {
+          console.error("Lỗi khi lấy danh sách bình luận:", response.error);
+          return res.status(500).json(response.error);
+        }
+
+        // console.log("Lấy danh sách bình luận thành công:", response);
         res.json(response);
       }
     );
