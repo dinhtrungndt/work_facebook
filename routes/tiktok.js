@@ -4,7 +4,7 @@
 
 // const clientKey = '6chomlvkst9ob';
 // const clientSecret = 'c326a78a78936d90a56d6e5cda3b33de2a143135';
-// const redirectUri = encodeURIComponent('http://localhost:3000/callback');
+// const redirectUri = encodeURIComponent('https://datnapi-qelj.onrender.com');
 // const { TiktokSDK } = require('tiktok-sdk');
 
 // const tiktokInstance = new TiktokSDK('2173763362959066', 'f6ce4cf21fc62c82b7f1b3575fbd5d9f');
@@ -14,15 +14,16 @@
 // );
 
 // router.get('/auth', (req, res) => {
-//     // const authUrl = `https://open-api.tiktok.com/platform/oauth/connect/?client_key=${clientKey}&response_type=code&scope=user.info.basic&redirect_uri=${redirectUri}&state=your_state`;
-//     // res.redirect(authUrl);
+//     const state = '123456';
+//     const authUrl = `https://open-api.tiktok.com/platform/oauth/connect/?client_key=${clientKey}&response_type=code&scope=user.info.basic&redirect_uri=${redirectUri}&state=${state}`;
+//     res.redirect(authUrl);
 //     // tiktokInstance.auth.getAccessToken('authCode')
 //     //     .then(
 //     //         (res) => {
 //     //             console.log(res);
 //     //         }
 //     //     )
-//     res.send("Hello Tiktok");
+//     // res.send("Hello Tiktok");
 // });
 
 // router.get('/callback', async (req, res) => {
@@ -48,55 +49,32 @@
 // });
 
 // module.exports = router;
-require('dotenv').config();
+
 const express = require('express');
-const axios = require('axios');
-const qs = require('qs');
+const app = express();
+const fetch = require('node-fetch');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
-const router = express.Router();
+app.use(cookieParser());
+app.use(cors());
+app.listen(process.env.PORT || 5000);
 
-// Step 1: Redirect to TikTok for authentication
-router.get('/tiktok', (req, res) => {
-    const authUrl = `https://open-api.tiktok.com/platform/oauth/connect?client_key=${process.env.TIKTOK_CLIENT_KEY}&response_type=code&scope=user.info.basic&redirect_uri=${process.env.TIKTOK_REDIRECT_URI}&state=some_random_string`;
-    res.redirect(authUrl);
-});
+const CLIENT_KEY = 'aw3vkxd3dshunhj6' // this value can be found in app's developer portal
+const SERVER_ENDPOINT_REDIRECT= encodeURIComponent('https://datnapi-qelj.onrender.com'); // this value can be found in app's developer portal
+app.get('/oauth', (req, res) => {
+    const csrfState = Math.random().toString(36).substring(2);
+    res.cookie('csrfState', csrfState, { maxAge: 60000 });
 
-// Step 2: Handle TikTok's callback and exchange code for access token
-router.get('/tiktok/callback', async (req, res) => {
-    const { code } = req.query;
+    let url = 'https://www.tiktok.com/v2/auth/authorize/';
 
-    try {
-        const tokenResponse = await axios.post('https://open-api.tiktok.com/oauth/access_token/', qs.stringify({
-            client_key: process.env.TIKTOK_CLIENT_KEY,
-            client_secret: process.env.TIKTOK_CLIENT_SECRET,
-            code: code,
-            grant_type: 'authorization_code',
-            redirect_uri: process.env.TIKTOK_REDIRECT_URI,
-        }), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
+    // the following params need to be in `application/x-www-form-urlencoded` format.
+    url += '?client_key={CLIENT_KEY}';
+    url += '&scope=user.info.basic';
+    url += '&response_type=code';
+    url += '&redirect_uri={SERVER_ENDPOINT_REDIRECT}';
+    url += '&state=' + csrfState;
 
-        const accessToken = tokenResponse.data.data.access_token;
-
-        // Step 3: Fetch user info
-        const userInfoResponse = await axios.get(`https://open-api.tiktok.com/user/info/`, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-        });
-
-        const userInfo = userInfoResponse.data.data;
-
-        res.json({
-            message: 'User authenticated successfully!',
-            user: userInfo,
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-module.exports = router;
-
+    res.redirect(url);
+})
+module.exports = app;
