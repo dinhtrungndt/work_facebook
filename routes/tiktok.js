@@ -1,51 +1,72 @@
-const express = require("express");
-const axios = require("axios");
+const express = require('express');
+const axios = require('axios');
+const querystring = require('querystring');
 const router = express.Router();
+
+// Thông tin ứng dụng TikTok
 const clientKey = 'aw3vkxd3dshunhj6';
 const clientSecret = '27bRu8tY2x4on32nL03A4zEqkQjrmlp0';
-const redirectUri = encodeURIComponent('http://localhost:3000/callback');
+const redirectUri = 'http://localhost:3000/callback';
 
-router.get("/", (req, res) => {
-  res.send("Hello Tiktok");
-});
+function generateRandomString(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
 
-router.get('/auth', (req, res) => {
-  const state = Math.random().toString(36).substring(2); // Tạo giá trị state ngẫu nhiên
-  req.session.state = state; // Lưu giá trị state vào session
-  const authUrl = `https://open-api.tiktok.com/platform/oauth/connect/?client_key=${clientKey}&response_type=code&scope=user.info.basic&redirect_uri=${redirectUri}&state=${state}`;
+// Định tuyến cho trang chủ
+router.get('/', (req, res) => {
+  const state = generateRandomString(16);
+  const authUrl = `https://www.tiktok.com/auth/authorize/?client_key=${clientKey}&scope=user.info.basic&redirect_uri=${redirectUri}&response_type=code&state=${state}`;
   res.redirect(authUrl);
 });
 
+// Định tuyến cho callback
 router.get('/callback', async (req, res) => {
-  const { code, state } = req.query;
+  const code = req.query.code;
+  const state = req.query.state;
 
-  // Kiểm tra giá trị state để ngăn chặn tấn công CSRF
-  if (!req.session.state || req.session.state !== state) {
+  // Kiểm tra giá trị state
+  if (state !== generateRandomString(16)) {
     return res.status(400).send('Invalid state');
   }
 
   try {
-    const tokenResponse = await axios.post('https://open-api.tiktok.com/oauth/access_token', null, {
-      params: {
+    // Trao đổi mã xác thực để lấy mã truy cập
+    const tokenResponse = await axios.post(
+      'https://open-api.tiktok.com/oauth/access_token/',
+      querystring.stringify({
         client_key: clientKey,
         client_secret: clientSecret,
-        code: code,
+        code,
         grant_type: 'authorization_code',
-        redirect_uri: decodeURIComponent(redirectUri),
+        redirect_uri: redirectUri,
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+
+    const accessToken = tokenResponse.data.data.access_token;
+
+    // Lấy thông tin cơ bản của người dùng
+    const userResponse = await axios.get('https://open.tiktok.com/user/info/basic/', {
+      headers: {
+        'Access-Token': accessToken,
       },
     });
 
-    // Kiểm tra trạng thái xác thực
-    if (tokenResponse.data.data.error) {
-      const { error, error_description } = tokenResponse.data.data;
-      return res.status(400).send(`Error getting access token: ${error} - ${error_description}`);
-    }
+    const userInfo = userResponse.data.data;
 
-    const accessToken = tokenResponse.data.data.access_token;
-    res.send(`Access Token: ${accessToken}`);
+    res.send(`Welcome, ${userInfo.unique_id}!`);
   } catch (error) {
-    console.error('Error getting access token:', error.response ? error.response.data : error.message);
-    res.status(500).send('Error getting access token');
+    console.error('Error:', error.response.data);
+    res.status(500).send('Error authenticating with TikTok');
   }
 });
 
