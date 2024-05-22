@@ -32,6 +32,7 @@
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
+    "qs": "^6.12.1",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tiktok-api": "^0.4.1",
